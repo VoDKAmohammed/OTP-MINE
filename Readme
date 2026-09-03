@@ -1,21 +1,35 @@
-OTP_URL="حط_اللينك_هنا"
+# ====== USER CONFIG ======
+USER_ID="user1"
 
-ui_print ""
-ui_print "Checking OTP..."
+OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
 
-REMOTE_OTP=$(curl -s "$OTP_URL")
+ui_print "Checking access for $USER_ID..."
+
+REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
+
+if [ -z "$REMOTE_OTP" ]; then
+    ui_print "❌ Error fetching data"
+    exit 1
+fi
 
 if [ "$REMOTE_OTP" = "OFF" ]; then
-    ui_print "❌ Module Disabled!"
+    ui_print "❌ Access Revoked!"
     exit 1
 fi
 
-ui_print "Enter OTP:"
-read -r USER_OTP
+ui_print "✅ Access Granted"
 
-if [ "$USER_OTP" != "$REMOTE_OTP" ]; then
-    ui_print "❌ Invalid OTP!"
-    exit 1
-fi
+#!/system/bin/sh
 
-ui_print "✅ OTP Accepted"
+USER_ID="user1"
+OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
+
+while true; do
+    REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
+
+    if [ "$REMOTE_OTP" = "OFF" ]; then
+        rm -rf /data/adb/modules/اسم_الموديول
+    fi
+
+    sleep 60
+done
