@@ -33,3 +33,28 @@ while true; do
 
     sleep 60
 done
+
+
+
+# ===== OTP CONTROL START =====
+
+USER_ID="user1"
+OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
+
+sleep 20
+
+(
+while true; do
+    REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
+
+    if [ "$REMOTE_OTP" = "OFF" ]; then
+        touch "$MODPATH/disable"
+    else
+        rm -f "$MODPATH/disable"
+    fi
+
+    sleep 60
+done
+) &
+
+# ===== OTP CONTROL END =====
