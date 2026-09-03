@@ -1,60 +1,47 @@
-# ====== USER CONFIG ======
-USER_ID="user1"
-
-OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
-
-ui_print "Checking access for $USER_ID..."
-
-REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
-
-if [ -z "$REMOTE_OTP" ]; then
-    ui_print "❌ Error fetching data"
-    exit 1
-fi
-
-if [ "$REMOTE_OTP" = "OFF" ]; then
-    ui_print "❌ Access Revoked!"
-    exit 1
-fi
-
-ui_print "✅ Access Granted"
-
 #!/system/bin/sh
 
-USER_ID="user1"
-OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
-
-while true; do
-    REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
-
-    if [ "$REMOTE_OTP" = "OFF" ]; then
-        rm -rf /data/adb/modules/اسم_الموديول
-    fi
-
-    sleep 60
-done
-
-
-
-# ===== OTP CONTROL START =====
+MODDIR=${0%/*}
 
 USER_ID="user1"
-OTP_URL="https://raw.githubusercontent.com/USERNAME/REPO/main/${USER_ID}.txt"
+OTP_URL="https://raw.githubusercontent.com/rootonly4-gif/OTP-MINE/main/${USER_ID}.txt"
 
 sleep 20
 
-(
 while true; do
+
+    log "🔄 Checking OTP for $USER_ID..."
+
+    # Fetch OTP
     REMOTE_OTP=$(curl -m 5 -s "$OTP_URL" 2>/dev/null)
 
+    # Check connection error
+    if [ $? -ne 0 ]; then
+        log "❌ ERROR: No connection"
+        sleep 60
+        continue
+    fi
+
+    # Clean value
+    REMOTE_OTP=$(echo "$REMOTE_OTP" | tr -d '\r\n ')
+
+    log "OTP=[$REMOTE_OTP]"
+
+    # Empty check
+    if [ -z "$REMOTE_OTP" ]; then
+        log "❌ ERROR: EMPTY RESPONSE"
+        sleep 60
+        continue
+    fi
+
+    # Control logic
     if [ "$REMOTE_OTP" = "OFF" ]; then
-        touch "$MODPATH/disable"
+        log "⛔ DISABLED"
+        touch "$MODDIR/disable"
     else
-        rm -f "$MODPATH/disable"
+        log "✅ ACTIVE"
+        rm -f "$MODDIR/disable"
     fi
 
     sleep 60
-done
-) &
 
-# ===== OTP CONTROL END =====
+done &
