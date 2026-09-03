@@ -1,0 +1,21 @@
+OTP_URL="حط_اللينك_هنا"
+
+ui_print ""
+ui_print "Checking OTP..."
+
+REMOTE_OTP=$(curl -s "$OTP_URL")
+
+if [ "$REMOTE_OTP" = "OFF" ]; then
+    ui_print "❌ Module Disabled!"
+    exit 1
+fi
+
+ui_print "Enter OTP:"
+read -r USER_OTP
+
+if [ "$USER_OTP" != "$REMOTE_OTP" ]; then
+    ui_print "❌ Invalid OTP!"
+    exit 1
+fi
+
+ui_print "✅ OTP Accepted"
